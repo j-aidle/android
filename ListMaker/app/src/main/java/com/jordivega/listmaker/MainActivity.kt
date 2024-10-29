@@ -9,6 +9,7 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
+import androidx.recyclerview.widget.RecyclerView
 import com.jordivega.listmaker.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -16,8 +17,16 @@ class MainActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
 
+    lateinit var listsRecyclerView: RecyclerView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        listsRecyclerView = findViewById(R.id.lists_recyclerview)
+
+        listsRecyclerView.layoutManager = LinearLayoutManager(this)
+
+        listsRecyclerView.adapter = ListSelectionRecyclerViewAdapter()
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
