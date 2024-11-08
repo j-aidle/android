@@ -23,6 +23,8 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var listsRecyclerView: RecyclerView
 
+    val listDataManager: ListDataManager = ListDataManager(this)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -34,10 +36,11 @@ class MainActivity : AppCompatActivity() {
 //        appBarConfiguration = AppBarConfiguration(navController.graph)
 //        setupActionBarWithNavController(navController, appBarConfiguration)
 
+        val lists = listDataManager.readLists()
 
         listsRecyclerView = findViewById(R.id.lists_recyclerview)
         listsRecyclerView.layoutManager = LinearLayoutManager(this)
-        listsRecyclerView.adapter = ListSelectionRecyclerViewAdapter()
+        listsRecyclerView.adapter = ListSelectionRecyclerViewAdapter(lists)
 
 
         binding.fab.setOnClickListener { view ->
@@ -60,6 +63,12 @@ class MainActivity : AppCompatActivity() {
         builder.setView(listTitleEditText)
 
         builder.setPositiveButton(possitiveButtonTitle) { dialog, _ ->
+            val list = TaskList(listTitleEditText.text.toString())
+            listDataManager.saveList(list)
+
+            val recyclerAdapter = listsRecyclerView.adapter as ListSelectionRecyclerViewAdapter
+            recyclerAdapter.addList(list)
+
             dialog.dismiss()
         }
 
