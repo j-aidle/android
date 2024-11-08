@@ -9,12 +9,13 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.jordivega.listmaker.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var appBarConfiguration: AppBarConfiguration
+    //private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
 
     lateinit var listsRecyclerView: RecyclerView
@@ -22,20 +23,19 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        listsRecyclerView = findViewById(R.id.lists_recyclerview)
-
-        listsRecyclerView.layoutManager = LinearLayoutManager(this)
-
-        listsRecyclerView.adapter = ListSelectionRecyclerViewAdapter()
-
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         setSupportActionBar(binding.toolbar)
 
-        val navController = findNavController(R.id.nav_host_fragment_content_main)
-        appBarConfiguration = AppBarConfiguration(navController.graph)
-        setupActionBarWithNavController(navController, appBarConfiguration)
+//        val navController = findNavController(R.id.nav_host_fragment_content_main)
+//        appBarConfiguration = AppBarConfiguration(navController.graph)
+//        setupActionBarWithNavController(navController, appBarConfiguration)
+
+
+        listsRecyclerView = findViewById(R.id.lists_recyclerview)
+        listsRecyclerView.layoutManager = LinearLayoutManager(this)
+        listsRecyclerView.adapter = ListSelectionRecyclerViewAdapter()
+
 
         binding.fab.setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
@@ -60,9 +60,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onSupportNavigateUp(): Boolean {
-        val navController = findNavController(R.id.nav_host_fragment_content_main)
-        return navController.navigateUp(appBarConfiguration)
-                || super.onSupportNavigateUp()
-    }
+//    override fun onSupportNavigateUp(): Boolean {
+//        val navController = findNavController(R.id.nav_host_fragment_content_main)
+//        return navController.navigateUp(appBarConfiguration)
+//                || super.onSupportNavigateUp()
+//    }
 }
