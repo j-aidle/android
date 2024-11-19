@@ -41,5 +41,6 @@ class ListSelectionRecyclerViewAdapter(private val lists : ArrayList<TaskList>,
         fun removeList(list: TaskList) {
             lists.remove(list)
             notifyItemRemoved(lists.size-1)
+            notifyDataSetChanged()
         }
 }

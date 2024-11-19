@@ -7,6 +7,8 @@ class ListDataManager(private val context: Context) {
 
     val PREF_NAME = "SharedPreferenceExample"
 
+    val tasksArray = ArrayList<TaskList>()
+
     fun saveList(list: TaskList) {
         val sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE).edit()
         sharedPreferences.putStringSet(list.name, list.tasks.toHashSet())
@@ -14,11 +16,11 @@ class ListDataManager(private val context: Context) {
         sharedPreferences.commit()
     }
 
-    fun removeFromLists(position: Int): ArrayList<TaskList> {
+    fun removeFromLists(taskListToDelete: TaskList): ArrayList<TaskList> {
         val sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
         val sharedPreferenceContents = sharedPreferences.all
         val taskList = ArrayList<TaskList>()
-        taskList.removeAt(position)
+        taskList.remove(taskListToDelete)
 
         return taskList
     }
@@ -34,6 +36,8 @@ class ListDataManager(private val context: Context) {
             val list = TaskList(taskList.key, itemsHashSet)
 
             taskLists.add(list)
+
+            tasksArray.add(list)
         }
 
         return taskLists

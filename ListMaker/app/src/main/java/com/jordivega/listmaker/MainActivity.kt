@@ -3,6 +3,7 @@ package com.jordivega.listmaker
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.os.Parcelable
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.InputType
@@ -31,6 +32,8 @@ class MainActivity : AppCompatActivity(), ListSelectionRecyclerViewAdapter.ListS
 
     val listDataManager: ListDataManager = ListDataManager(this)
 
+    val array = ArrayList<TaskList>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -41,8 +44,11 @@ class MainActivity : AppCompatActivity(), ListSelectionRecyclerViewAdapter.ListS
 //        val navController = findNavController(R.id.nav_host_fragment_content_main)
 //        appBarConfiguration = AppBarConfiguration(navController.graph)
 //        setupActionBarWithNavController(navController, appBarConfiguration)
+        val PREF_NAME = "SharedPreferenceExample"
+        val pref : SharedPreferences = getApplicationContext().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
 
         val lists = listDataManager.readLists()
+        array.addAll(lists)
 
         listsRecyclerView = findViewById(R.id.lists_recyclerview)
         listsRecyclerView.layoutManager = LinearLayoutManager(this)
@@ -84,6 +90,10 @@ class MainActivity : AppCompatActivity(), ListSelectionRecyclerViewAdapter.ListS
 
     private fun setRecyclerViewItemTouchListener() {
 
+        val lists = listDataManager.tasksArray
+        val allLists = ArrayList<TaskList>()
+        allLists.addAll(lists)
+
         val itemTouchCallback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
             override fun onMove(
                 recyclerView: RecyclerView,
@@ -93,30 +103,29 @@ class MainActivity : AppCompatActivity(), ListSelectionRecyclerViewAdapter.ListS
                 return false
             }
 
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, swipeDir: Int) {
 
                 val position = viewHolder.adapterPosition
-                val pref : SharedPreferences = getApplicationContext().getSharedPreferences("E", Context.MODE_PRIVATE)
+//                val pref : SharedPreferences = getApplicationContext().getSharedPreferences("E", Context.MODE_PRIVATE)
+//
+//                val editor = pref.edit()
 
-                val editor = pref.edit()
+                if (swipeDir == ItemTouchHelper.LEFT) {
+                    val tmp = lists[position]
+                    val PREF_NAME = ""
 
-                val list = listDataManager
+                    val pref : SharedPreferences = getApplicationContext().getSharedPreferences(PREF_NAME,Context.MODE_PRIVATE)
 
-                val allLists = list.readLists()
+                    val editor = pref.edit()
+                    editor.remove(tmp.name)
+                    editor.apply()
 
-                allLists.removeAt(position)
+                    updateLists()
 
-                val arrayCount = allLists.count()
+                    var RVItemCount = listsRecyclerView.adapter!!.itemCount
+                    Log.d(TAG, "recyclerAdapter.itemCount is: ($RVItemCount)")
 
-                Log.d(TAG, "onCreated called. Score is $arrayCount & $position")
-
-                val recyclerView = listsRecyclerView
-
-                val recyclerAdapter = recyclerView.adapter
-
-                recyclerAdapter!!.notifyItemRemoved(position)
-
-                editor.commit()
+                }
 
             }
 
@@ -124,11 +133,11 @@ class MainActivity : AppCompatActivity(), ListSelectionRecyclerViewAdapter.ListS
 
         val itemTouchHelper = ItemTouchHelper(itemTouchCallback)
         itemTouchHelper.attachToRecyclerView(listsRecyclerView)
-        val pref : SharedPreferences = getApplicationContext().getSharedPreferences("E", Context.MODE_PRIVATE)
+        val pref : SharedPreferences = getApplicationContext().getSharedPreferences("SharedPreferenceExample", Context.MODE_PRIVATE)
 
-        val editor = pref.edit()
-
-        editor.commit()
+//        val editor = pref.edit()
+//
+//        editor.commit()
 
     }
 
@@ -152,7 +161,7 @@ class MainActivity : AppCompatActivity(), ListSelectionRecyclerViewAdapter.ListS
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == LIST_DETAIL_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             data?.let {
-                listDataManager.saveList(data.getParcelableExtra(INTENT_LIST_KEY))
+                listDataManager.saveList(data.getParcelableExtra(INTENT_LIST_KEY)!!)
                 updateLists()
             }
         }
@@ -160,7 +169,9 @@ class MainActivity : AppCompatActivity(), ListSelectionRecyclerViewAdapter.ListS
 
     private fun updateLists() {
         val lists = listDataManager.readLists()
+
         listsRecyclerView.adapter = ListSelectionRecyclerViewAdapter(lists, this)
+
     }
 
 //    override fun onSupportNavigateUp(): Boolean {

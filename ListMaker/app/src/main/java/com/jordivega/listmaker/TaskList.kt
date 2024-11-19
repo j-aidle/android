@@ -2,17 +2,22 @@ package com.jordivega.listmaker
 
 import android.os.Parcel
 import android.os.Parcelable
+import android.util.Log
+
 class TaskList(val name: String, val tasks: ArrayList<String> = ArrayList()) : Parcelable {
+    private val TAG = MainActivity::class.java.simpleName
 
     constructor(parcel: Parcel) : this(
-        parcel.readString()!!,
-        parcel.createStringArrayList()!!
+        parcel.readString()?: "",
+        parcel.createStringArrayList()?: ArrayList()
     )
     override fun describeContents() = 0
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(name)
         parcel.writeStringList(tasks)
+
+        Log.d(TAG, "parcel name is: $name")
     }
 
     companion object CREATOR: Parcelable.Creator<TaskList> {
